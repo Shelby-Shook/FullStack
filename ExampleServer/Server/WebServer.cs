@@ -65,6 +65,15 @@ public class WebServer
                     //Handle POST requests
                     HandlePostRequests(request, response);
                     break;
+                case "PUT":
+                    HandlePutRequests(request, response);
+                    break;
+                case "OPTIONS":
+                    HandleOptionsRequests(response);
+                    break;
+                default:
+                    SendResponse(response, HttpStatusCode.NotFound, null);
+                    break;
             }
 
 
@@ -122,7 +131,35 @@ public class WebServer
 
     }
 
+    //Handle Update Requests
+    private void HandlePutRequests(HttpListenerRequest req, HttpListenerResponse res)
+    {
+        if (req.HasEntityBody)
+        {
+            CompleteTaskRequest? body = JsonSerializer.Deserialize<CompleteTaskRequest>(req.InputStream);
+            
+           
+              bool result =  _taskRepository.MarkTaskAsComplete(body?.TaskId ?? -1);
 
+              HttpStatusCode code = result ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
+              SendResponse(res, code, null);
+           
+
+        }
+        else
+        {
+            string errorMessage = "Could not update task.";
+            Console.WriteLine(errorMessage);
+            ErrorResponse error = new ErrorResponse(errorMessage);
+            SendResponse(res, HttpStatusCode.BadRequest, error);
+        }
+    }
+
+    private void HandleOptionsRequests(HttpListenerResponse res)
+    {
+        res.AddHeader("Access-Control-Allow-Methods", "*");
+        SendResponse(res, HttpStatusCode.OK, null);
+    }
 
 
     private void SendResponse(HttpListenerResponse response, HttpStatusCode statusCode, object? data)

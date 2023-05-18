@@ -1,5 +1,6 @@
 /* id of task container */
-#task-container {
+#task-container, 
+#completed-tasks-container {
     width: 1000px;
     max-width: 90vw;
     margin: 1rem auto 0;
@@ -16,6 +17,11 @@
     background-color: lemonchiffon;
     padding: .5rem;
 }
+
+.task.completed {
+    text-decoration: line-through;
+}
+
 
 .task > h3 {
     margin: 0;

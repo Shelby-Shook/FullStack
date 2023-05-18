@@ -41,6 +41,24 @@ public class TaskRepository
         return tasks; 
     }
 
+    //Update method
+    public bool MarkTaskAsComplete(int taskId)
+    {
+        TaskModel? task = _taskList.FirstOrDefault(t => t.Id == taskId);
+
+        //Check if task doesnt exist OR already complete
+        if (task == null || task.IsComplete)
+        {
+           // Return false to indicate it didnt change anything
+        return false; 
+        }
+
+        task.IsComplete = true;
+        return true;
+
+       
+    }
+
     //Delete method
     public bool DeleteTaskById(int id)
     {

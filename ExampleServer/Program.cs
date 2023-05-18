@@ -1,4 +1,5 @@
 ﻿using ExampleServer.Data;
+using ExampleServer.Server;
 
 TaskModel.TotalTasks = 0;
 Console.WriteLine(TaskModel.TotalTasks);
@@ -39,3 +40,8 @@ foreach (var task in tasks)
 {
     Console.WriteLine(task.Description);
 }
+
+//Initializing a WebServer instance
+// Passing in a repository instance, and a URL to listen on
+WebServer server = new WebServer(repo, "http://localhost:8000/");
+server.Run(); //Public method in the class WebServer

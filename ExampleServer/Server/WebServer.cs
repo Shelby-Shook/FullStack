@@ -68,6 +68,9 @@ public class WebServer
                 case "PUT":
                     HandlePutRequests(request, response);
                     break;
+                case "DELETE":
+                    HandleDeleteRequests(request, response);
+                    break;
                 case "OPTIONS":
                     HandleOptionsRequests(response);
                     break;
@@ -130,6 +133,37 @@ public class WebServer
         }
 
     }
+
+    // Handling DELETE requests
+    private void HandleDeleteRequests(HttpListenerRequest req, HttpListenerResponse res)
+    {
+        string? idSegment = req.Url?.Segments.Last();
+        int taskId = int.Parse(idSegment ?? "-1");
+
+        bool deleteResult = _taskRepository.DeleteTaskById(taskId);
+
+        if (deleteResult)
+        {
+            string outputMessage = $"Removed task #{taskId}";
+            Console.WriteLine(outputMessage);
+            SendResponse(res, HttpStatusCode.OK, null);
+        }
+        else 
+        {
+            string errorMessage = $"Failed to remove task #{taskId}";
+            Console.WriteLine(errorMessage);
+            SendResponse(res, HttpStatusCode.BadRequest, new ErrorResponse(errorMessage));
+        }
+    }
+
+    //Response to an OPTIONS request and allows all CORS methods
+    private void HandleDeleteRequests(HttpListenerResponse res)
+    {
+        res.AddHeader("Access-Control-Allow-Mthods", "*");
+        SendResponse(res, HttpStatusCode.OK, null);
+    }
+
+    
 
     //Handle Update Requests
     private void HandlePutRequests(HttpListenerRequest req, HttpListenerResponse res)
